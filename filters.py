@@ -17,6 +17,7 @@ iterator.
 You'll edit this file in Tasks 3a and 3c.
 """
 import operator
+from itertools import islice
 
 
 class UnsupportedCriterionError(NotImplementedError):
@@ -108,8 +109,30 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
-    return ()
+    filter_list = []
+
+    if date:
+        filter_list.append(DateFilter(op=operator.eq, value=date))
+    if start_date:
+        filter_list.append(DateFilter(op=operator.ge, value=start_date))
+    if end_date:
+        filter_list.append(DateFilter(op=operator.le, value=end_date))
+    if distance_min:
+        filter_list.append(DistanceFilter(op=operator.ge, value=distance_min))
+    if distance_max:
+        filter_list.append(DistanceFilter(op=operator.le, value=distance_max))
+    if velocity_min:
+        filter_list.append(VelocityFilter(op=operator.ge, value=velocity_min))
+    if velocity_max:
+        filter_list.append(VelocityFilter(op=operator.le, value=velocity_max))
+    if diameter_min:
+        filter_list.append(DiameterFilter(op=operator.ge, value=diameter_min))
+    if diameter_max:
+        filter_list.append(DiameterFilter(op=operator.le, value=diameter_max))
+    if hazardous is not None:  # check for not None, otherwise hazardous == False wouldn't work
+        filter_list.append(HazardousFilter(op=operator.eq, value=hazardous))
+
+    return filter_list
 
 
 def limit(iterator, n=None):
@@ -121,5 +144,72 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    if n is None or n == 0:
+        return iterator
+    else:
+        return islice(iterator, 0, n)
+
+
+class DateFilter(AttributeFilter):
+    """DateFilter class inherits from AttributeFilter base class and overwrites the get method."""
+
+    @classmethod
+    def get(cls, approach):
+        """Overwrite the base class get method and provide the CloseApproach time.date() attribute
+
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of the time attribute converted to a date.
+        """
+        return approach.time.date()
+
+
+class DistanceFilter(AttributeFilter):
+    """DistanceFilter class inherits from AttributeFilter base class and overwrites the get method."""
+
+    @classmethod
+    def get(cls, approach):
+        """Overwrite the base class get method and provide the CloseApproach distance attribute
+
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of the distance attribute.
+        """
+        return approach.distance
+
+
+class VelocityFilter(AttributeFilter):
+    """VelocityFilter class inherits from AttributeFilter base class and overwrites the get method."""
+
+    @classmethod
+    def get(cls, approach):
+        """Overwrite the base class get method and provide the CloseApproach velocity attribute
+
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of the velocity attribute.
+        """
+        return approach.velocity
+
+
+class DiameterFilter(AttributeFilter):
+    """DiameterFilter class inherits from AttributeFilter base class and overwrites the get method."""
+
+    @classmethod
+    def get(cls, approach):
+        """Overwrite the base class get method and provide the CloseApproach NEO diameter attribute
+
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of the NEO diameter attribute.
+        """
+        return approach.neo.diameter
+
+
+class HazardousFilter(AttributeFilter):
+    """HazardousFilter class inherits from AttributeFilter base class and overwrites the get method."""
+
+    @classmethod
+    def get(cls, approach):
+        """Overwrite the base class get method and provide the CloseApproach NEO hazardous attribute
+
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of the NEO hazardous attribute.
+        """
+        return approach.neo.hazardous
