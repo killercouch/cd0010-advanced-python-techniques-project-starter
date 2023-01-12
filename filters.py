@@ -39,6 +39,7 @@ class AttributeFilter:
     Concrete subclasses can override the `get` classmethod to provide custom
     behavior to fetch a desired attribute from the given `CloseApproach`.
     """
+
     def __init__(self, op, value):
         """Construct a new `AttributeFilter` from an binary predicate and a reference value.
 
@@ -70,6 +71,7 @@ class AttributeFilter:
         raise UnsupportedCriterionError
 
     def __repr__(self):
+        """Return AttributeFilter string representation."""
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
@@ -155,7 +157,7 @@ class DateFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Overwrite the base class get method and provide the CloseApproach time.date() attribute
+        """Overwrite the base class get method and provide the CloseApproach time.date() attribute.
 
         :param approach: A `CloseApproach` on which to evaluate this filter.
         :return: The value of the time attribute converted to a date.
@@ -168,7 +170,7 @@ class DistanceFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Overwrite the base class get method and provide the CloseApproach distance attribute
+        """Overwrite the base class get method and provide the CloseApproach distance attribute.
 
         :param approach: A `CloseApproach` on which to evaluate this filter.
         :return: The value of the distance attribute.
@@ -181,7 +183,7 @@ class VelocityFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Overwrite the base class get method and provide the CloseApproach velocity attribute
+        """Overwrite the base class get method and provide the CloseApproach velocity attribute.
 
         :param approach: A `CloseApproach` on which to evaluate this filter.
         :return: The value of the velocity attribute.
@@ -194,7 +196,7 @@ class DiameterFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Overwrite the base class get method and provide the CloseApproach NEO diameter attribute
+        """Overwrite the base class get method and provide the CloseApproach NEO diameter attribute.
 
         :param approach: A `CloseApproach` on which to evaluate this filter.
         :return: The value of the NEO diameter attribute.
@@ -207,7 +209,7 @@ class HazardousFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """Overwrite the base class get method and provide the CloseApproach NEO hazardous attribute
+        """Overwrite the base class get method and provide the CloseApproach NEO hazardous attribute.
 
         :param approach: A `CloseApproach` on which to evaluate this filter.
         :return: The value of the NEO hazardous attribute.
